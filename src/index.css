@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+  --bg-color: #f8fafc; --card-bg: #ffffff; --text-color: #1e293b;
+  --line-color: #94a3b8; --primary: #2563eb; --primary-text: #ffffff;
+  --panel-bg: #ffffff; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.theme-dark { --bg-color: #121212; --card-bg: #1e1e1e; --text-color: #e0e0e0; --line-color: #444; --primary: #bb86fc; --primary-text: #000; --panel-bg: #2c2c2c; --shadow: 0 4px 6px -1px rgba(0,0,0,0.5); }
+.theme-minimal { --bg-color: #fff; --card-bg: #fff; --text-color: #000; --line-color: #000; --primary: #000; --primary-text: #fff; --panel-bg: #fff; --shadow: 2px 2px 0px rgba(0,0,0,1); }
+.theme-vibrant { --bg-color: #f3e8ff; --card-bg: #fff; --text-color: #581c87; --line-color: #c084fc; --primary: #db2777; --primary-text: #fff; --panel-bg: #fff; --shadow: 0 4px 15px -5px rgba(219,39,119,0.4); }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: system-ui, -apple-system, sans-serif; }
+
+.org-chart { list-style: none; padding: 0; margin: 0 auto; display: flex; flex-direction: column; align-items: center; position: relative; }
+.org-chart ul { list-style: none; padding: 20px 0 0 0; margin: 0; display: flex; justify-content: center; position: relative; }
+.org-chart li { position: relative; padding: 20px 10px 0 10px; display: flex; flex-direction: column; align-items: center; }
+
+/* Líneas conectoras */
+.org-chart li::before, .org-chart li::after { content: ''; position: absolute; top: 0; right: 50%; width: 50%; height: 20px; border-top: 2px solid var(--line-color); }
+.org-chart li::after { right: auto; left: 50%; border-left: 2px solid var(--line-color); }
+.org-chart li:only-child::after, .org-chart li:only-child::before { display: none; }
+.org-chart li:only-child { padding-top: 20px; }
+.org-chart li:first-child::before, .org-chart li:last-child::after { border: 0 none; }
+.org-chart li:last-child::before { border-right: 2px solid var(--line-color); border-radius: 0 5px 0 0; }
+.org-chart li:first-child::after { border-radius: 5px 0 0 0; }
+.org-chart ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid var(--line-color); width: 0; height: 20px; }
+
+/* Tarjetas */
+.node-card { background: var(--card-bg); border: 2px solid var(--primary); border-radius: 12px; padding: 15px 10px; width: 150px; min-width: 150px; text-align: center; box-shadow: var(--shadow); cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: all 0.2s; }
+.node-card:active { transform: scale(0.98); }
+.node-card.selected { box-shadow: 0 0 0 4px var(--primary); transform: translateY(-2px); }
+.node-name { font-weight: bold; font-size: 0.95rem; line-height: 1.2; }
+.node-desc { font-size: 0.75rem; opacity: 0.8; line-height: 1.2; }

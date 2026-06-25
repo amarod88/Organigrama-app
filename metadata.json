@@ -1,0 +1,6 @@
+{
+  "name": "Organigrama",
+  "description": "Herramienta intuitiva para crear y exportar organigramas en PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
