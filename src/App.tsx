@@ -8,6 +8,7 @@ import { OrgNode } from './types';
 import { ChartNode } from './components/OrgChartNode';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { Eye, EyeOff } from 'lucide-react';
 
 const initialData: OrgNode = {
   id: 1, name: "Director General", desc: "Estrategia global.", children: [
@@ -28,7 +29,8 @@ export default function App() {
   const [subtitle, setSubtitle] = useState("");
   const [theme, setTheme] = useState("corporate");
   const [signature, setSignature] = useState("Anibal Amador");
-  const chartRef = useRef<HTMLDivElement>(null);
+  const [isSignatureVisible, setIsSignatureVisible] = useState(true);
+  const exportRef = useRef<HTMLDivElement>(null);
 
   const findNode = (node: OrgNode, id: number): OrgNode | null => {
     if (node.id === id) return node;
@@ -52,20 +54,13 @@ export default function App() {
   };
 
   const handleExportPDF = async () => {
-    if (!chartRef.current) return;
+    if (!exportRef.current) return;
     
-    // Hide footer during export
-    const footer = document.querySelector('footer');
-    if (footer) footer.style.display = 'none';
-
-    const canvas = await html2canvas(chartRef.current, {
+    const canvas = await html2canvas(exportRef.current, {
       scale: 3, // Higher scale for better quality
       backgroundColor: "#ffffff",
       useCORS: true
     });
-
-    // Restore footer
-    if (footer) footer.style.display = '';
 
     const imgData = canvas.toDataURL('image/png', 1.0);
     const pdf = new jsPDF('l', 'mm', 'a4');
@@ -90,13 +85,28 @@ export default function App() {
           </select>
           <button className="bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleExportPDF}>📤 Exportar PDF</button>
         </div>
-        <input className="text-2xl font-bold text-center bg-transparent border-b-2 border-transparent focus:border-blue-500 outline-none mt-4" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <input className="text-lg text-center bg-transparent border-b border-transparent focus:border-blue-500 outline-none" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="Subtítulo" />
       </header>
-      <div className="overflow-x-auto" ref={chartRef}>
-        <ul className="org-chart">
-          <ChartNode node={data} selectedNodeId={selectedNodeId} onSelect={setSelectedNodeId} />
-        </ul>
+
+      <div ref={exportRef} className="bg-white p-4">
+        <div className="flex flex-col items-center gap-2 mb-8">
+            <input className="text-2xl font-bold text-center bg-transparent border-b-2 border-transparent focus:border-blue-500 outline-none mt-4" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input className="text-lg text-center bg-transparent border-b border-transparent focus:border-blue-500 outline-none" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="Subtítulo" />
+        </div>
+
+        <div className="overflow-x-auto">
+            <ul className="org-chart">
+            <ChartNode node={data} selectedNodeId={selectedNodeId} onSelect={setSelectedNodeId} />
+            </ul>
+        </div>
+        
+        <footer className={`text-center p-4 text-gray-500 text-sm transition-opacity duration-300 ${isSignatureVisible ? 'opacity-100' : 'opacity-0'}`}>
+            <div className='flex justify-center items-center gap-2'>
+                Elaborado por: <input className="border-b border-gray-400 bg-transparent text-center" value={signature} onChange={(e) => setSignature(e.target.value)} />
+                <button onClick={() => setIsSignatureVisible(!isSignatureVisible)}>
+                    {isSignatureVisible ? <Eye size={16} /> : <EyeOff size={16} />}
+                </button>
+            </div>
+        </footer>
       </div>
 
       {selectedNode && (
@@ -144,9 +154,6 @@ export default function App() {
           </div>
         </div>
       )}
-      <footer className="text-center p-4 text-gray-500 text-sm">
-        Elaborado por: <input className="border-b border-gray-400 bg-transparent text-center" value={signature} onChange={(e) => setSignature(e.target.value)} />
-      </footer>
     </div>
   );
 }
