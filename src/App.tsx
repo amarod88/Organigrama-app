@@ -59,7 +59,21 @@ export default function App() {
         const canvas = await html2canvas(exportRef.current, {
           scale: 3, // Higher scale for better quality
           backgroundColor: "#ffffff",
-          useCORS: true
+          useCORS: true,
+          onclone: (clonedDoc) => {
+            const style = clonedDoc.createElement('style');
+            style.innerHTML = `
+                * {
+                    color: black !important;
+                    border-color: black !important;
+                }
+                .node-card {
+                    border: 2px solid black !important;
+                    background-color: white !important;
+                }
+            `;
+            clonedDoc.head.appendChild(style);
+          }
         });
 
         const imgData = canvas.toDataURL('image/png', 1.0);
