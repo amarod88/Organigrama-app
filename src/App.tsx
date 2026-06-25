@@ -55,20 +55,24 @@ export default function App() {
 
   const handleExportPDF = async () => {
     if (!exportRef.current) return;
-    
-    const canvas = await html2canvas(exportRef.current, {
-      scale: 3, // Higher scale for better quality
-      backgroundColor: "#ffffff",
-      useCORS: true
-    });
+    try {
+        const canvas = await html2canvas(exportRef.current, {
+          scale: 3, // Higher scale for better quality
+          backgroundColor: "#ffffff",
+          useCORS: true
+        });
 
-    const imgData = canvas.toDataURL('image/png', 1.0);
-    const pdf = new jsPDF('l', 'mm', 'a4');
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-    
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
-    pdf.save('organigrama.pdf');
+        const imgData = canvas.toDataURL('image/png', 1.0);
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+        pdf.save('organigrama.pdf');
+    } catch (e) {
+        console.error("PDF export failed:", e);
+        alert("Error al exportar PDF: " + e);
+    }
   };
 
   const selectedNode = selectedNodeId ? findNode(data, selectedNodeId) : null;
@@ -76,7 +80,7 @@ export default function App() {
   return (
     <div className={`min-h-screen p-4 ${theme === 'dark' ? 'theme-dark' : theme === 'minimal' ? 'theme-minimal' : theme === 'vibrant' ? 'theme-vibrant' : ''}`}>
       <header className="flex flex-col items-center gap-2 mb-8">
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-2 mt-2 relative z-50">
           <select className="border p-2 rounded-lg" value={theme} onChange={(e) => setTheme(e.target.value)}>
             <option value="corporate">Corporativo</option>
             <option value="dark">Oscuro</option>
